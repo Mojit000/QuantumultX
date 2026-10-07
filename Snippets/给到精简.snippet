@@ -1,35 +1,12 @@
-#!name=给到商场精简
-#!desc=移除首页“热门精选”、“热门活动”、“热门商场”、“AI助手”，移除我的“广告”
-
-[Map Local]
-# 精简：首页“热门精选”
-^https:\/\/gapi\.guanaitong\.com\/api\/v1\/home\/rec\? data-type=text data="{}" status-code=200
-
-# 精简：首页“AI助手”
-^https:\/\/m\.igeidao\.com\/give-llm-ai\/v1\/ai\/chat_init data-type=text data="{}" status-code=200
-
-^https:\/\/gapi\.guanaitong\.com\/api2\/v2\/ai\/entry data-type=text data="{}" status-code=200
-
-[Script]
-# 精简：首页Banner
-精简：首页 = type=http-response, pattern=^https:\/\/gapi\.guanaitong\.com\/api\/v8\/home\/cms, script-path=https://raw.githubusercontent.com/Mojit000/Loon/refs/heads/main/GeiDao/Homepage.js, requires-body=true
-
-# 精简：我的页面
-精简：我的“广告” = type=http-response, pattern=^https:\/\/gapi\.guanaitong\.com\/api\/v4\/my\/center, script-path=https://raw.githubusercontent.com/Mojit000/Loon/refs/heads/main/GeiDao/Profile.js, requires-body=true
-
-精简：悬浮的“有奖推荐” = type=http-response, pattern=^https:\/\/gapi\.guanaitong\.com\/api\/v1\/my\/user_profile, script-path=https://raw.githubusercontent.com/Mojit000/Loon/refs/heads/main/GeiDao/Profile_v2.js, requires-body=true
-
-# 精简：商场顶部的轮播
-精简：首页标签页热门商场顶部的轮播 = type=http-response, pattern=^https:\/\/gapi\.guanaitong\.com\/api\/v1\/home\/display_zone\?type=2, script-path=https://raw.githubusercontent.com/Mojit000/Loon/refs/heads/main/GeiDao/Hot_Market.js, requires-body=true
-
-精简：商场标签页商场顶部的轮播 = type=http-response, pattern=^https:\/\/gapi\.guanaitong\.com\/api\/v2\/common\/cms_custom_data\?page_name=privilege, script-path=https://raw.githubusercontent.com/Mojit000/Loon/refs/heads/main/GeiDao/Hot_Market.js, requires-body=true
-
-# 精简：职点标签页
-精简：职点标签页健康馆“健康商城” = type=http-response, pattern=^https:\/\/a\.guanaitong\.com\/give-health-api\/home, script-path=https://raw.githubusercontent.com/Mojit000/Loon/refs/heads/main/GeiDao/Work.js, requires-body=true
-
-精简：职点标签页企业文化“企学院” = type=http-response, pattern=^https:\/\/a\.guanaitong\.com\/incentive_api\/home\/subscribe_apps\?, script-path=https://raw.githubusercontent.com/Mojit000/Loon/refs/heads/main/GeiDao/Work.js, requires-body=true
-
-精简：职点标签页企业文化“为你点赞” = type=http-response, pattern=^https:\/\/a\.guanaitong\.com\/incentive_api\/home\/education_data\?, script-path=https://raw.githubusercontent.com/Mojit000/Loon/refs/heads/main/GeiDao/Work.js, requires-body=true
-
-[MITM]
-hostname = %APPEND% gapi.guanaitong.com, a.guanaitong.com
+hostname = gapi.guanaitong.com, a.guanaitong.com
+^https:\/\/gapi\.guanaitong\.com\/api\/v1\/home\/rec\? url reject-dict
+^https:\/\/m\.igeidao\.com\/give-llm-ai\/v1\/ai\/chat_init url reject-dict
+^https:\/\/gapi\.guanaitong\.com\/api2\/v2\/ai\/entry url reject-dict
+https:\/\/gapi\.guanaitong\.com\/api\/v8\/home\/cms url script-response-body https://raw.githubusercontent.com/Mojit000/Loon/refs/heads/main/GeiDao/Homepage.js
+https:\/\/gapi\.guanaitong\.com\/api\/v4\/my\/center url script-response-body https://raw.githubusercontent.com/Mojit000/Loon/refs/heads/main/GeiDao/Profile.js
+https:\/\/gapi\.guanaitong\.com\/api\/v1\/my\/user_profile url script-response-body https://raw.githubusercontent.com/Mojit000/Loon/refs/heads/main/GeiDao/Profile_v2.js
+https:\/\/gapi\.guanaitong\.com\/api\/v1\/home\/display_zone\?type=2 url script-response-body https://raw.githubusercontent.com/Mojit000/Loon/refs/heads/main/GeiDao/Hot_Market.js
+https:\/\/gapi\.guanaitong\.com\/api\/v2\/common\/cms_custom_data\?page_name=privilege url script-response-body https://raw.githubusercontent.com/Mojit000/Loon/refs/heads/main/GeiDao/Hot_Market.js
+https:\/\/a\.guanaitong\.com\/give-health-api\/home url script-response-body https://raw.githubusercontent.com/Mojit000/Loon/refs/heads/main/GeiDao/Work.js
+https:\/\/a\.guanaitong\.com\/incentive_api\/home\/subscribe_apps\? url script-response-body https://raw.githubusercontent.com/Mojit000/Loon/refs/heads/main/GeiDao/Work.js
+https:\/\/a\.guanaitong\.com\/incentive_api\/home\/education_data\? url script-response-body https://raw.githubusercontent.com/Mojit000/Loon/refs/heads/main/GeiDao/Work.js
