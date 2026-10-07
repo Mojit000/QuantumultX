@@ -1,37 +1,17 @@
-#!name=翻咔社区
-#!desc=保留直播热门标签；移除私信顶部匹配Banner；移除动态页面内的彩虹A+会员推荐、官方推送，精简动态页面内的热门；精简资料页面；精简主页，移除定制Tab
-#!category=去广告
-#!system=ios
-#!requirement=CORE_VERSION>=20
-
-[Body Rewrite]
-http-response-jq ^https:\/\/api\.finka\.cn\/recommend\/other 'delpaths([["data","liveList"]])'
-http-response-jq ^https:\/\/api\.finka\.cn\/live\/view\/v3 'del(.data.activities, .data.activity2)'
-http-response-jq ^https:\/\/api\.finka\.cn\/recommend\/live\/tabConfig '.data.tabList |= map(select(.type != "AUDIOLIVE"))'
-# http-response-jq ^https:\/\/api\.finka\.cn\/recommend\/live '.data.moduleList |= map(select(.adList | not))' 'del(.data.list[].decoV1, .data.list[].deco)'
-http-response-jq # ^https:\/\/api\.finka\.cn\/constants\/ios\? 'del(.data.splashAdNew, .data.activityView, .data.matchWebTabInfo, .data.adFeedParam, .data.prefetchResources)'
-http-response-jq ^https:\/\/api\.finka\.cn\/vas\/tool-box\/get\? '.data.list |= map(select(.trackName != "NEW_NEARBY" and .trackName != "MEET_REMINDER"))'
-http-response-jq ^https:\/\/api\.finka\.cn\/user\/recommend\?_t=\d+&multiInfo=1 '.data.list |= map(select(((.user.weight / ((.user.height / 100) * (.user.height / 100))) >= 18 and (.user.weight / ((.user.height / 100) * (.user.height / 100))) <= 27)))'
-http-response-jq ^https:\/\/api\.finka\.cn\/user\/recommend\?_t=\d+&multiInfo=1 '.data.list |= map(select(.user.age >= 32 and .user.age <= 42))'
-http-response-jq ^https:\/\/api\.finka\.cn\/profile\/info\/v2\? 'del(.data.vasEntranceInfo,.data.featuredServicesList, .data.adMoreUrl, .data.ad, .data.valueEquityTopList, .data.profilePasterAd, .data.outFunctionList)'
-http-response-jq ^https:\/\/api\.finka\.cn\/profile\/info\/v2\? '.data.innerFunction[0] |= .[0:-1]'
-http-response-jq ^https:\/\/api\.finka\.cn\/feed\/v5\? 'del(.data.list[] | select(has("sponsorExtraInfo")))'
-http-response-jq ^https:\/\/api\.finka\.cn\/feed\/v5\? '.data.list |= map(select(.type != "PostSpecialExposure" and (.boosting | not) and .type != "ShowCase"))'
-# http-response-jq ^https:\/\/api\.finka\.cn\/post\/rcmd\/list\? 'del(.data.adList, .data.tagList)' '.data.list |= map(select(.tabList | not))'
-http-response-jq ^https:\/\/api\.finka\.cn\/vas\/visitor\? 'del(.data.iosHideOptions, .data.iosPublicOptions, .data.visitorOptions)'
-
-[Map Local]
-# ^https:\/\/api\.finka\.cn\/inbox\/match\/newest\? reject-dict
-^https:\/\/api\.finka\.cn\/ad\/? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-
-^https:\/\/api\.finka\.cn\/audio-live\/quick-access data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-
-^https:\/\/api\.finka\.cn\/audio-live\/list data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-
-# 精简翻咔页面
-^https:\/\/api\.finka\.cn\/constants\/ios\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-
-^https:\/\/api\.finka\.cn\/mask-match\? data-type=text data="{}" status-code=200 header="Content-Type:application/json"
-
-[MITM]
-hostname = %APPEND% api.finka.cn
+hostname = api.finka.cn
+^https:\/\/api\.finka\.cn\/recommend\/other url jsonjq-response-body 'delpaths([["data","liveList"]])'
+^https:\/\/api\.finka\.cn\/live\/view\/v3 url jsonjq-response-body 'del(.data.activities, .data.activity2)'
+^https:\/\/api\.finka\.cn\/recommend\/live\/tabConfig url jsonjq-response-body '.data.tabList |= map(select(.type != "AUDIOLIVE"))'
+^https:\/\/api\.finka\.cn\/vas\/tool-box\/get\? url jsonjq-response-body '.data.list |= map(select(.trackName != "NEW_NEARBY" and .trackName != "MEET_REMINDER"))'
+^https:\/\/api\.finka\.cn\/user\/recommend\?_t=\d+&multiInfo=1 url jsonjq-response-body '.data.list |= map(select(((.user.weight / ((.user.height / 100) * (.user.height / 100))) >= 18 and (.user.weight / ((.user.height / 100) * (.user.height / 100))) <= 27)))'
+^https:\/\/api\.finka\.cn\/user\/recommend\?_t=\d+&multiInfo=1 url jsonjq-response-body '.data.list |= map(select(.user.age >= 32 and .user.age <= 42))'
+^https:\/\/api\.finka\.cn\/profile\/info\/v2\? url jsonjq-response-body 'del(.data.vasEntranceInfo,.data.featuredServicesList, .data.adMoreUrl, .data.ad, .data.valueEquityTopList, .data.profilePasterAd, .data.outFunctionList)'
+^https:\/\/api\.finka\.cn\/profile\/info\/v2\? url jsonjq-response-body '.data.innerFunction[0] |= .[0:-1]'
+^https:\/\/api\.finka\.cn\/feed\/v5\? url jsonjq-response-body 'del(.data.list[] | select(has("sponsorExtraInfo")))'
+^https:\/\/api\.finka\.cn\/feed\/v5\? url jsonjq-response-body '.data.list |= map(select(.type != "PostSpecialExposure" and (.boosting | not) and .type != "ShowCase"))'
+^https:\/\/api\.finka\.cn\/vas\/visitor\? url jsonjq-response-body 'del(.data.iosHideOptions, .data.iosPublicOptions, .data.visitorOptions)'
+^https:\/\/api\.finka\.cn\/ad\/? url reject-dict
+^https:\/\/api\.finka\.cn\/audio-live\/quick-access url reject-dict
+^https:\/\/api\.finka\.cn\/audio-live\/list url reject-dict
+^https:\/\/api\.finka\.cn\/constants\/ios\? url reject-dict
+^https:\/\/api\.finka\.cn\/mask-match\? url reject-dict
