@@ -1,0 +1,2 @@
+hostname = *.xiaohongshu.com
+^https?:\/\/[a-z]+\.xiaohongshu\.com\/api/sns/v\d/(homefeed|localfeed) url jsonjq-response-body '.data |= map(select(.type == "normal"))'
